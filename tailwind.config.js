@@ -2,6 +2,11 @@
 module.exports = {
 	darkMode: ['class'],
 	content: ['./pages/**/*.{ts,tsx}', './components/**/*.{ts,tsx}', './app/**/*.{ts,tsx}', './src/**/*.{ts,tsx}'],
+	safelist: [
+		{
+			pattern: /grid-cols-./,
+		},
+	],
 	theme: {
 		container: {
 			center: true,
@@ -60,6 +65,10 @@ module.exports = {
 					from: { height: 'var(--radix-accordion-content-height)' },
 					to: { height: 0 },
 				},
+			},
+			fontFamily: {
+				sans: ['Roboto', 'system-ui', 'ui-sans-serif'],
+				mono: ['JetBrains Mono', 'monospace'],
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
