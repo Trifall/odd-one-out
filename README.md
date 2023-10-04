@@ -1,16 +1,8 @@
-# Vite + React + TypeScript + TailwindCSS + ShadCN UI
+# Odd One Out Game
 
 ## Overview
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint/Prettier rules.
-
-Includes:
-
-- TailwindCSS
-- ShadCN UI
-  - Clsx and tailwind-merge (cn function)
-- Prettier
-- ESLint
+Simple game which displays a grid of symbols/characters and the user has to select the odd one out.
 
 ## Expanding the ESLint configuration
 
