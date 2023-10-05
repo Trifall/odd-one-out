@@ -1,5 +1,5 @@
 import Footer from './components/footer';
-import GameBox from './components/gameBox';
+import GameState from './components/gameState';
 import Header from './components/header';
 
 function App() {
@@ -9,7 +9,7 @@ function App() {
 				<section className='bg-dark'>
 					<Header />
 					<div className='absolute left-0 top-0 h-full w-full'>
-						<GameBox />
+						<GameState />
 					</div>
 				</section>
 			</main>

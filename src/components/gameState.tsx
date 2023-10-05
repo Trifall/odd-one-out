@@ -4,12 +4,30 @@ import { Button } from './ui/button';
 // symbols can be any alphanumeric character
 const SYMBOLS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'.split('');
 
+// Game Overview:
+/*
+  - Board starts a 5x5 grid, with 1 random tile being the odd one out.
+  - Each tile is a square with a random symbol in it, this is generated each round, and the odd one out is also generated each round.
+  - The player has 1 life, and 5 seconds to find the odd one out.
+  - If the player clicks the wrong tile, they lose the game, and the game ends, shows the player their score, and a button to restart the game.
+    - The game is restarted when the player clicks the restart button.
+  - If the player clicks the correct tile, the game continues, and the player's score increases by 1.
+  - On each successful round, the grid size increases by 1, and the time to find the odd one out decreases by 0.1 seconds.
+    - The timer starts at 5 seconds, and decreases by 0.1 seconds each round, and is shown to the player during the round
+  - The game ends when the player loses.
+  - The player's score is the amount of rounds they successfully completed.
+  - Between each round, the player is shown their score, and a button to continue to the next round.
+    - The game continues to the next round when the player clicks the continue button.
+*/
+
 const GameState = () => {
 	const [gridSize, setGridSize] = useState(5);
 	const [timeRemaining, setTimeRemaining] = useState(0);
 	const [score, setScore] = useState(0);
 	const [round, setRound] = useState(1);
 	const [gameStarted, setGameStarted] = useState(false);
+	const [gamePaused, setGamePaused] = useState(false);
+	const [gameEnded, setGameEnded] = useState(false);
 
 	const generateGrid = (size: number) => {
 		// pick the random odd one out and another for the common one from symbols, but they must be different
@@ -47,35 +65,37 @@ const GameState = () => {
 	const [grid, setGrid] = useState(generateGrid(gridSize));
 
 	const endGame = useCallback(() => {
-		alert(`Game over! Your score is ${score}.`);
-
-		setGrid(generateGrid(5));
-		setScore(0);
-		setRound(1);
-		setTimeRemaining(0);
 		setGameStarted(false);
-	}, [score]);
+		setGameEnded(true);
+	}, []);
 
 	useEffect(() => {
-		if (gameStarted && timeRemaining > 0) {
+		if (gameStarted && timeRemaining > 0 && !gamePaused) {
 			// const timer = setInterval(() => {
 			// 	setTimeRemaining((prevTime) => prevTime - 0.1);
 			// }, 100);
 			// return () => clearInterval(timer);
 		}
-	}, [gameStarted, timeRemaining]);
+	}, [gameStarted, timeRemaining, gamePaused]);
 
 	useEffect(() => {
-		if (gameStarted && timeRemaining <= 0) {
+		if (gameStarted && timeRemaining <= 0 && !gamePaused) {
 			endGame();
 		}
-	}, [gameStarted, timeRemaining, endGame]);
+	}, [gameStarted, timeRemaining, endGame, gamePaused]);
+
+	const handleContinueClick = () => {
+		setRound(round + 1);
+		setGamePaused(false);
+	};
 
 	const handleTileClick = (symbol: string) => {
 		if (symbol === getOddOneOut()) {
 			let newGridSize = gridSize;
-			setScore(score + 1);
-			if (score % 5 === 0) {
+			const newScore = score + 1;
+			setScore(newScore);
+			if (newScore % 5 === 0 && newScore >= 5) {
+				alert(`Grid Size +1, newScore: ${newScore}, round: ${round}`);
 				if (gridSize < 10) {
 					newGridSize = gridSize + 1;
 				}
@@ -84,6 +104,7 @@ const GameState = () => {
 			setGridSize(newGridSize);
 			setGrid(generateGrid(newGridSize));
 			setRound(round + 1);
+			setGamePaused(true);
 		} else {
 			endGame();
 		}
@@ -101,6 +122,8 @@ const GameState = () => {
 
 	const handleStartClick = () => {
 		setGameStarted(true);
+		setGamePaused(false);
+		setGameEnded(false);
 		setTimeRemaining(5);
 		setScore(0);
 		setRound(1);
@@ -110,41 +133,64 @@ const GameState = () => {
 
 	return (
 		<div className='layout flex min-h-screen flex-col items-center justify-center text-primary-foreground'>
-			{!gameStarted && (
+			{!gameStarted && !gameEnded && (
 				<Button onClick={() => handleStartClick()} className='mt-4'>
 					Start Game
 				</Button>
 			)}
 			{gameStarted && (
 				<>
-					<div className='mb-4 flex w-full justify-center'>
-						<div>Time remaining: {timeRemaining.toFixed(1)}</div>
-					</div>
-					<div className={`grid ${`grid-cols-${gridSize}`}  gap-4`}>
-						{grid.flat().map((symbol, index) => (
-							<Button
-								className='max-h-[40px] min-h-[40px] min-w-[40px] max-w-[40px]'
-								key={index}
-								onClick={() => handleTileClick(symbol)}
-							>
-								{symbol}
-							</Button>
-						))}
-					</div>
-					<div className='mt-4 flex w-full justify-center'>
-						<div>Score: {score}</div>
-					</div>
-					{timeRemaining <= 0 && (
-						<Button onClick={() => endGame()} className='mt-4'>
-							Restart
-						</Button>
+					{!gamePaused && (
+						<>
+							<div className='mb-4 flex w-full justify-center'>
+								<div>Time remaining: {timeRemaining.toFixed(1)}</div>
+							</div>
+							<div className={`grid ${`grid-cols-${gridSize}`}  gap-4`}>
+								{grid.flat().map((symbol, index) => (
+									<Button
+										className='max-h-[40px] min-h-[40px] min-w-[40px] max-w-[40px]'
+										key={index}
+										onClick={() => handleTileClick(symbol)}
+									>
+										{symbol}
+									</Button>
+								))}
+							</div>
+						</>
 					)}
-					{timeRemaining > 0 && score > 0 && score % 5 === 0 && (
-						<Button onClick={() => setRound(round + 1)} className='mt-4'>
-							Continue
-						</Button>
+					<div className='mt-4 flex w-full flex-col items-center justify-center text-lg'>
+						<p>Score: {score}</p>
+						<p>
+							Grid Size: {gridSize - 1}x{gridSize - 1}
+						</p>
+					</div>
+
+					{gamePaused && (
+						<div className=' flex w-full flex-col items-center justify-center text-lg'>
+							<p>Current Max Time: {timeRemaining}</p>
+							<Button onClick={handleContinueClick} className='mt-4'>
+								Continue {score % 5 === 0 ? `(Grid Size +1)` : ''}
+							</Button>
+						</div>
 					)}
 				</>
+			)}
+			{gameEnded && (
+				<div className='flex flex-col'>
+					<h1 className='text-center text-3xl'>Game over!</h1>
+					<Button onClick={() => handleStartClick()} className='mt-4'>
+						Restart
+					</Button>
+					<div className='mt-2'>
+						<p>Stats:</p>
+						<p>Score: {score}</p>
+						<p>Round: {round}</p>
+						<p>
+							Grid Size: {gridSize}x{gridSize}
+						</p>
+						<p>Time Remaining: {timeRemaining}</p>
+					</div>
+				</div>
 			)}
 		</div>
 	);
