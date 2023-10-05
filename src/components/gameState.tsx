@@ -95,11 +95,11 @@ const GameState = () => {
 			const newScore = score + 1;
 			setScore(newScore);
 			if (newScore % 5 === 0 && newScore >= 5) {
-				alert(`Grid Size +1, newScore: ${newScore}, round: ${round}`);
 				if (gridSize < 10) {
 					newGridSize = gridSize + 1;
 				}
-				setTimeRemaining(100 - (round - 1) * 0.1);
+				// set the time remaining to prev - 0.1, unless its less than 0.6 already
+				setTimeRemaining((prevTime) => (prevTime - 0.1 < 0.6 ? 0.5 : prevTime - 0.1));
 			}
 			setGridSize(newGridSize);
 			setGrid(generateGrid(newGridSize));
