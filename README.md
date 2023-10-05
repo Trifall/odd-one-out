@@ -4,21 +4,16 @@
 
 Simple game which displays a grid of symbols/characters and the user has to select the odd one out.
 
-## Expanding the ESLint configuration
+## TODOS
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
-
-- Configure the top-level `parserOptions` property like this:
-
-```js
-   parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-   },
-```
-
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+- [ ] Add game rules / description
+  - [ ] dropdown collapsible component (?)
+- [ ] End game if somehow manage to get to 0.0 seconds with the decrementing timer
+- [ ] Add local storage
+- [ ] Add scoreboard
+- [ ] Refactor to modularized components
+  - [ ] Stats card
+  - [ ] PausedScreen
+  - [ ] GameOverScreen
+  - [ ] GameScreen ?
+- [ ] Could change gamestate to one state object instead of multiple useState hooks
