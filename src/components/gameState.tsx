@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import Scoreboard, { ScoreboardEntry } from './scoreboard';
+import StatsCard from './statsCard';
 import { Button } from './ui/button';
 
 // symbols can be any alphanumeric character
@@ -117,8 +118,6 @@ const GameState = () => {
 			}
 			const newTimeRemaining = 10 - newScore * 0.1;
 			setTimeRemaining(newTimeRemaining < 0.6 ? 0.5 : newTimeRemaining);
-			console.log(`newtime: ${newTimeRemaining}, score: ${newScore}`);
-			// set the time remaining to 10 - (score * 0.1), unless its less than 0.6, then set it to 0.5
 			setGridSize(newGridSize);
 			setGrid(generateGrid(newGridSize));
 			setGameState('PAUSED');
@@ -211,14 +210,7 @@ const GameState = () => {
 							Scoreboard
 						</Button>
 					</div>
-					<div className='mt-2'>
-						<span className='text-lg font-bold'>Stats:</span>
-						<p>Score: {score}</p>
-						<p>
-							Grid Size: {gridSize}x{gridSize}
-						</p>
-						<p>Time Remaining: {timeRemaining <= 0 ? 0 : timeRemaining.toFixed(1)}</p>
-					</div>
+					<StatsCard gridSize={gridSize} score={score} timeRemaining={timeRemaining} />
 				</div>
 			)}
 			{showScoreboard && (
