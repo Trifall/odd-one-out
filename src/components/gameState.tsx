@@ -134,7 +134,7 @@ const GameState = () => {
 	return (
 		<div className='layout flex min-h-screen flex-col items-center justify-center text-primary-foreground'>
 			{!gameStarted && !gameEnded && (
-				<Button onClick={() => handleStartClick()} className='mt-4'>
+				<Button onClick={() => handleStartClick()} className='mt-4 h-64 w-64 text-4xl'>
 					Start Game
 				</Button>
 			)}
