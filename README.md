@@ -23,6 +23,6 @@ Simple game which displays a grid of symbols/characters and the user has to sele
   - [ ] PausedScreen
   - [ ] GameOverScreen
   - [ ] GameScreen ?
-- [ ] Could change gamestate to one state object instead of multiple useState hooks
+- [x] Could change gamestate to one state object instead of multiple useState hooks
 - [ ] Mobile friendly
 - [ ] Make sure default values are correct

@@ -5,13 +5,15 @@ import { Button } from './ui/button';
 // symbols can be any alphanumeric character
 const SYMBOLS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'.split('');
 
+const GAME_STATES = ['STARTED', 'PAUSED', 'ENDED', 'INACTIVE'] as const;
+
+type GameState = (typeof GAME_STATES)[keyof typeof GAME_STATES];
+
 const GameState = () => {
 	const [gridSize, setGridSize] = useState(5);
 	const [timeRemaining, setTimeRemaining] = useState(0);
 	const [score, setScore] = useState(0);
-	const [gameStarted, setGameStarted] = useState(false);
-	const [gamePaused, setGamePaused] = useState(false);
-	const [gameEnded, setGameEnded] = useState(false);
+	const [gameState, setGameState] = useState<GameState>('ENDED');
 	const [showScoreboard, setShowScoreboard] = useState(false);
 
 	const generateGrid = (size: number) => {
@@ -50,8 +52,7 @@ const GameState = () => {
 	const [grid, setGrid] = useState(generateGrid(gridSize));
 
 	const endGame = useCallback(() => {
-		setGameStarted(false);
-		setGameEnded(true);
+		setGameState('ENDED');
 		// add the score to the scoreboard localstorage
 		const scoreboardData = localStorage.getItem('scoreboard');
 		if (scoreboardData) {
@@ -81,27 +82,26 @@ const GameState = () => {
 	}, [score, timeRemaining]);
 
 	useEffect(() => {
-		if (gameStarted && timeRemaining > 0 && !gamePaused && !gameEnded) {
+		if (gameState === 'STARTED' && timeRemaining > 0) {
 			const timer = setInterval(() => {
 				setTimeRemaining((prevTime) => prevTime - 0.1);
 			}, 100);
 			return () => clearInterval(timer);
 		}
-	}, [gameStarted, timeRemaining, gamePaused, gameEnded]);
+	}, [gameState, timeRemaining]);
 
 	useEffect(() => {
-		if (gameStarted && timeRemaining <= 0 && !gamePaused) {
+		if (gameState === 'STARTED' && timeRemaining <= 0) {
 			endGame();
 		}
-	}, [gameStarted, timeRemaining, endGame, gamePaused]);
+	}, [gameState, timeRemaining, endGame]);
 
 	const handleContinueClick = () => {
-		setGamePaused(false);
+		setGameState('STARTED');
 	};
 
 	const handleBackClick = () => {
-		setGameStarted(false);
-		setGameEnded(false);
+		setGameState('INACTIVE');
 		setShowScoreboard(false);
 	};
 
@@ -121,7 +121,7 @@ const GameState = () => {
 			// set the time remaining to 10 - (score * 0.1), unless its less than 0.6, then set it to 0.5
 			setGridSize(newGridSize);
 			setGrid(generateGrid(newGridSize));
-			setGamePaused(true);
+			setGameState('PAUSED');
 		} else {
 			endGame();
 		}
@@ -138,9 +138,7 @@ const GameState = () => {
 	};
 
 	const handleStartClick = () => {
-		setGameStarted(true);
-		setGamePaused(false);
-		setGameEnded(false);
+		setGameState('STARTED');
 		setTimeRemaining(10);
 		setScore(0);
 		setGridSize(5);
@@ -149,7 +147,7 @@ const GameState = () => {
 
 	return (
 		<div className='layout flex min-h-screen flex-col items-center justify-center text-primary-foreground'>
-			{!showScoreboard && !gameStarted && !gameEnded && (
+			{!showScoreboard && gameState === 'INACTIVE' && (
 				<div className='flex flex-col items-center justify-center'>
 					<Button onClick={() => handleStartClick()} className='mt-4 h-64 w-64 text-4xl'>
 						Start Game
@@ -159,9 +157,9 @@ const GameState = () => {
 					</Button>
 				</div>
 			)}
-			{!showScoreboard && gameStarted && (
+			{!showScoreboard && (gameState === 'STARTED' || gameState === 'PAUSED') && (
 				<>
-					{!gamePaused && (
+					{gameState !== 'PAUSED' && (
 						<>
 							<div className='mb-4 flex w-full justify-center'>
 								<div>Time remaining: {timeRemaining.toFixed(1)}</div>
@@ -182,11 +180,14 @@ const GameState = () => {
 					<div className='mt-4 flex w-full flex-col items-center justify-center text-lg'>
 						<p>Score: {score}</p>
 						<p>
-							Grid Size: {score % 5 === 0 && gamePaused ? `${gridSize - 1}x${gridSize - 1}` : `${gridSize}x${gridSize}`}
+							Grid Size:{' '}
+							{score % 5 === 0 && gameState === 'PAUSED'
+								? `${gridSize - 1}x${gridSize - 1}`
+								: `${gridSize}x${gridSize}`}
 						</p>
 					</div>
 
-					{gamePaused && (
+					{gameState === 'PAUSED' && (
 						<div className=' flex w-full flex-col items-center justify-center text-lg'>
 							<p>Current Max Time: {timeRemaining.toFixed(1)}</p>
 							<Button onClick={handleContinueClick} className='mt-4'>
@@ -196,7 +197,7 @@ const GameState = () => {
 					)}
 				</>
 			)}
-			{!showScoreboard && gameEnded && (
+			{!showScoreboard && gameState === 'ENDED' && (
 				<div className='flex flex-col'>
 					<h1 className='text-center text-3xl'>Game over!</h1>
 					<div className='flex flex-col'>
