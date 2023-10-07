@@ -14,8 +14,8 @@ Simple game which displays a grid of symbols/characters and the user has to sele
 
 ## TODOS
 
-- [ ] Add game rules / description
-  - [ ] dropdown collapsible component (?)
+- [x] Add game rules / description
+  - [x] dropdown collapsible component (?)
 - [ ] Add local storage
 - [ ] Add scoreboard
 - [ ] Refactor to modularized components
