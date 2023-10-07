@@ -161,7 +161,7 @@ const GameState = () => {
 					<div className='mt-4 flex w-full flex-col items-center justify-center text-lg'>
 						<p>Score: {score}</p>
 						<p>
-							Grid Size: {gridSize - 1}x{gridSize - 1}
+							Grid Size: {score % 5 === 0 && gamePaused ? `${gridSize - 1}x${gridSize - 1}` : `${gridSize}x${gridSize}`}
 						</p>
 					</div>
 
