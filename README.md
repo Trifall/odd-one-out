@@ -16,8 +16,8 @@ Simple game which displays a grid of symbols/characters and the user has to sele
 
 - [x] Add game rules / description
   - [x] dropdown collapsible component (?)
-- [ ] Add local storage
-- [ ] Add scoreboard
+- [x] Add local storage
+- [x] Add scoreboard
 - [ ] Refactor to modularized components
   - [ ] Stats card
   - [ ] PausedScreen

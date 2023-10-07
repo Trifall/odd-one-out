@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import Scoreboard, { ScoreboardEntry } from './scoreboard';
 import { Button } from './ui/button';
 
 // symbols can be any alphanumeric character
@@ -8,10 +9,10 @@ const GameState = () => {
 	const [gridSize, setGridSize] = useState(5);
 	const [timeRemaining, setTimeRemaining] = useState(0);
 	const [score, setScore] = useState(0);
-	const [round, setRound] = useState(1);
 	const [gameStarted, setGameStarted] = useState(false);
 	const [gamePaused, setGamePaused] = useState(false);
 	const [gameEnded, setGameEnded] = useState(false);
+	const [showScoreboard, setShowScoreboard] = useState(false);
 
 	const generateGrid = (size: number) => {
 		// pick the random odd one out and another for the common one from symbols, but they must be different
@@ -51,16 +52,42 @@ const GameState = () => {
 	const endGame = useCallback(() => {
 		setGameStarted(false);
 		setGameEnded(true);
-	}, []);
+		// add the score to the scoreboard localstorage
+		const scoreboardData = localStorage.getItem('scoreboard');
+		if (scoreboardData) {
+			console.log(`adding new score: ${score}`);
+			const scoreboard: ScoreboardEntry[] = JSON.parse(scoreboardData);
+			scoreboard.push({
+				score,
+				date: new Date(),
+				lostBy: timeRemaining <= 0 ? 'Time Expired' : 'Incorrect tile',
+			} as ScoreboardEntry);
+			localStorage.setItem('scoreboard', JSON.stringify(scoreboard));
+			console.log(`scoreboard data: ${JSON.stringify(scoreboard, null, 2)}`);
+		} else {
+			// create the scoreboard localstorage
+			console.log(`creating new scoreboard`);
+			localStorage.setItem(
+				'scoreboard',
+				JSON.stringify([
+					{
+						score,
+						date: new Date(),
+						lostBy: timeRemaining <= 0 ? 'Time Expired' : 'Incorrect tile',
+					} as ScoreboardEntry,
+				])
+			);
+		}
+	}, [score, timeRemaining]);
 
 	useEffect(() => {
-		if (gameStarted && timeRemaining > 0 && !gamePaused) {
-			// const timer = setInterval(() => {
-			// 	setTimeRemaining((prevTime) => prevTime - 0.1);
-			// }, 100);
-			// return () => clearInterval(timer);
+		if (gameStarted && timeRemaining > 0 && !gamePaused && !gameEnded) {
+			const timer = setInterval(() => {
+				setTimeRemaining((prevTime) => prevTime - 0.1);
+			}, 100);
+			return () => clearInterval(timer);
 		}
-	}, [gameStarted, timeRemaining, gamePaused]);
+	}, [gameStarted, timeRemaining, gamePaused, gameEnded]);
 
 	useEffect(() => {
 		if (gameStarted && timeRemaining <= 0 && !gamePaused) {
@@ -69,8 +96,13 @@ const GameState = () => {
 	}, [gameStarted, timeRemaining, endGame, gamePaused]);
 
 	const handleContinueClick = () => {
-		setRound(round + 1);
 		setGamePaused(false);
+	};
+
+	const handleBackClick = () => {
+		setGameStarted(false);
+		setGameEnded(false);
+		setShowScoreboard(false);
 	};
 
 	const handleTileClick = (symbol: string) => {
@@ -82,12 +114,13 @@ const GameState = () => {
 				if (gridSize < 10) {
 					newGridSize = gridSize + 1;
 				}
-				// set the time remaining to prev - 0.1, unless its less than 0.6 already
-				setTimeRemaining((prevTime) => (prevTime - 0.1 < 0.6 ? 0.5 : prevTime - 0.1));
 			}
+			const newTimeRemaining = 10 - newScore * 0.1;
+			setTimeRemaining(newTimeRemaining < 0.6 ? 0.5 : newTimeRemaining);
+			console.log(`newtime: ${newTimeRemaining}, score: ${newScore}`);
+			// set the time remaining to 10 - (score * 0.1), unless its less than 0.6, then set it to 0.5
 			setGridSize(newGridSize);
 			setGrid(generateGrid(newGridSize));
-			setRound(round + 1);
 			setGamePaused(true);
 		} else {
 			endGame();
@@ -110,19 +143,23 @@ const GameState = () => {
 		setGameEnded(false);
 		setTimeRemaining(10);
 		setScore(0);
-		setRound(1);
 		setGridSize(5);
 		setGrid(generateGrid(5));
 	};
 
 	return (
 		<div className='layout flex min-h-screen flex-col items-center justify-center text-primary-foreground'>
-			{!gameStarted && !gameEnded && (
-				<Button onClick={() => handleStartClick()} className='mt-4 h-64 w-64 text-4xl'>
-					Start Game
-				</Button>
+			{!showScoreboard && !gameStarted && !gameEnded && (
+				<div className='flex flex-col items-center justify-center'>
+					<Button onClick={() => handleStartClick()} className='mt-4 h-64 w-64 text-4xl'>
+						Start Game
+					</Button>
+					<Button onClick={() => setShowScoreboard(true)} className='text-600 mt-4 h-12 w-32 bg-teal-500'>
+						Scoreboard
+					</Button>
+				</div>
 			)}
-			{gameStarted && (
+			{!showScoreboard && gameStarted && (
 				<>
 					{!gamePaused && (
 						<>
@@ -151,7 +188,7 @@ const GameState = () => {
 
 					{gamePaused && (
 						<div className=' flex w-full flex-col items-center justify-center text-lg'>
-							<p>Current Max Time: {timeRemaining}</p>
+							<p>Current Max Time: {timeRemaining.toFixed(1)}</p>
 							<Button onClick={handleContinueClick} className='mt-4'>
 								Continue {score % 5 === 0 ? `(Grid Size +1)` : ''}
 							</Button>
@@ -159,21 +196,37 @@ const GameState = () => {
 					)}
 				</>
 			)}
-			{gameEnded && (
+			{!showScoreboard && gameEnded && (
 				<div className='flex flex-col'>
 					<h1 className='text-center text-3xl'>Game over!</h1>
-					<Button onClick={() => handleStartClick()} className='mt-4'>
-						Restart
-					</Button>
+					<div className='flex flex-col'>
+						<Button onClick={() => handleStartClick()} className='mt-4'>
+							Restart
+						</Button>
+						<Button onClick={() => handleBackClick()} className='mt-4'>
+							Back
+						</Button>
+						<Button onClick={() => setShowScoreboard(true)} className='mt-4'>
+							Scoreboard
+						</Button>
+					</div>
 					<div className='mt-2'>
-						<p>Stats:</p>
+						<span className='text-lg font-bold'>Stats:</span>
 						<p>Score: {score}</p>
-						<p>Round: {round}</p>
 						<p>
 							Grid Size: {gridSize}x{gridSize}
 						</p>
-						<p>Time Remaining: {timeRemaining}</p>
+						<p>Time Remaining: {timeRemaining <= 0 ? 0 : timeRemaining.toFixed(1)}</p>
 					</div>
+				</div>
+			)}
+			{showScoreboard && (
+				<div className='flex flex-col'>
+					<h1 className='text-center text-3xl'>Scoreboard</h1>
+					<Scoreboard />
+					<Button onClick={() => setShowScoreboard(false)} className='mt-4'>
+						Back
+					</Button>
 				</div>
 			)}
 		</div>
