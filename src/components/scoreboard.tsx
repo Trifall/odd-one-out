@@ -1,4 +1,4 @@
-import moment from 'moment-timezone';
+import dayjs from 'dayjs';
 import { formatDate } from '../lib/utils';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './ui/table';
 
@@ -44,7 +44,7 @@ const Scoreboard = () => {
 						<TableRow key={index}>
 							<TableCell>{entry.score}</TableCell>
 							<TableCell>
-								{formatDate(entry.date)} - {moment(entry.date).format('h:mmA')}
+								{formatDate(entry.date)} - {dayjs(entry.date).format('h:mmA')}
 							</TableCell>
 							<TableCell>{entry.lostBy}</TableCell>
 						</TableRow>
