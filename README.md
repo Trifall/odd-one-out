@@ -20,9 +20,10 @@ Simple game which displays a grid of symbols/characters and the user has to sele
 - [x] Add scoreboard
 - [-] Refactor to modularized components
   - [x] Stats card
-  - [ ] PausedScreen
-  - [ ] GameOverScreen
-  - [ ] GameScreen ?
+  - [x] Scoreboard Game View
+  - [x] Start Game View
+  - [x] Active Game View
+  - [x] End Game View
 - [x] Could change gamestate to one state object instead of multiple useState hooks
 - [ ] Mobile friendly
 - [ ] Make sure default values are correct
