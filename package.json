@@ -1,8 +1,8 @@
 {
-	"name": "vite-react-ts-tw-shadcn-template",
-	"version": "1.0.1",
+	"name": "odd-one-out",
+	"version": "1.1.0",
 	"type": "module",
-	"description": "A template with Vite, React, TypeScript, TailwindCSS, and ShadCN UI.",
+	"description": "A game where you have to find the odd one out",
 	"author": {
 		"name": "Jerren Trifan",
 		"email": "Jerren@trifall.com"

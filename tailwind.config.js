@@ -7,16 +7,16 @@ module.exports = {
 			pattern: /grid-cols-./,
 		},
 		{
-			pattern: /min-w-\[./,
+			pattern: /min-w-./,
 		},
 		{
-			pattern: /max-w-\[./,
+			pattern: /max-w-./,
 		},
 		{
-			pattern: /min-h-\[./,
+			pattern: /min-h-./,
 		},
 		{
-			pattern: /max-h-\[./,
+			pattern: /max-h-./,
 		},
 	],
 	theme: {
