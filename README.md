@@ -25,5 +25,5 @@ Simple game which displays a grid of symbols/characters and the user has to sele
   - [x] Active Game View
   - [x] End Game View
 - [x] Could change gamestate to one state object instead of multiple useState hooks
-- [ ] Mobile friendly
-- [ ] Make sure default values are correct
+- [x] Mobile friendly
+- [x] Make sure default values are correct
