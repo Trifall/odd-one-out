@@ -10,7 +10,7 @@ const AccordionItem = React.forwardRef<
 	React.ElementRef<typeof AccordionPrimitive.Item>,
 	React.ComponentPropsWithoutRef<typeof AccordionPrimitive.Item>
 >(({ className, ...props }, ref) => (
-	<AccordionPrimitive.Item ref={ref} className={cn('border-b', className)} {...props} />
+	<AccordionPrimitive.Item ref={ref} className={cn('data-[state=open]:bg-background', className)} {...props} />
 ));
 AccordionItem.displayName = 'AccordionItem';
 
@@ -41,7 +41,7 @@ const AccordionContent = React.forwardRef<
 	<AccordionPrimitive.Content
 		ref={ref}
 		className={cn(
-			'overflow-hidden bg-background text-sm data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down',
+			'overflow-hidden bg-background text-sm data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down data-[state=open]:border-b',
 			className
 		)}
 		{...props}

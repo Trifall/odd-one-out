@@ -2,7 +2,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from './
 
 const RulesBox = () => {
 	return (
-		<div className='relative z-[1005]  px-4'>
+		<div className='relative z-[1005] px-4'>
 			<Accordion type='single' collapsible className='w-full'>
 				<AccordionItem value='item-1'>
 					<AccordionTrigger>
