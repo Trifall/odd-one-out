@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { generateGrid } from '../lib/grid';
 import { saveScoreToStorage } from '../lib/storage';
 import { GameState } from '../types/types';
@@ -13,7 +13,8 @@ const GameState = () => {
 	const [score, setScore] = useState(0);
 	const [gameState, setGameState] = useState<GameState>('INACTIVE');
 	const [showScoreboard, setShowScoreboard] = useState(false);
-	const [grid, setGrid] = useState(generateGrid(5));
+
+	const grid = useMemo(() => generateGrid(gridSize, score), [gridSize, score]);
 
 	const endGame = useCallback(() => {
 		setGameState('ENDED');
@@ -58,7 +59,6 @@ const GameState = () => {
 			const newTimeRemaining = 10 - newScore * 0.1;
 			setTimeRemaining(newTimeRemaining < 0.6 ? 0.5 : newTimeRemaining);
 			setGridSize(newGridSize);
-			setGrid(generateGrid(newGridSize));
 			setGameState('PAUSED');
 		} else {
 			endGame();
@@ -84,7 +84,6 @@ const GameState = () => {
 		setTimeRemaining(10);
 		setScore(0);
 		setGridSize(5);
-		setGrid(generateGrid(5));
 	};
 
 	return (

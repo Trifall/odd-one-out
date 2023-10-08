@@ -22,7 +22,7 @@ const ActiveGameView = ({
 	const isMobile = useBetterMediaQuery('(max-width: 480px)');
 	if (isMobile === undefined) return <></>;
 	const buttonSize = isMobile ? '30px' : '40px';
-	console.log(`isMobile: ${isMobile}`);
+	// console.log(`isMobile: ${isMobile}`);
 
 	return (
 		<>

@@ -13,7 +13,7 @@ const Scoreboard = () => {
 	try {
 		const scoreboardData = localStorage.getItem('scoreboard');
 		if (!scoreboardData) {
-			console.log(`scoreboard empty, creating new scoreboard`);
+			// console.log(`scoreboard empty, creating new scoreboard`);
 			localStorage.setItem('scoreboard', JSON.stringify([]));
 		} else {
 			scores = JSON.parse(scoreboardData).sort((a: ScoreboardEntry, b: ScoreboardEntry) => b.score - a.score);

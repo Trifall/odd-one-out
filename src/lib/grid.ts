@@ -1,7 +1,8 @@
 // symbols can be any alphanumeric character
 const SYMBOLS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'.split('');
 
-export const generateGrid = (size: number) => {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export const generateGrid = (size: number, _score?: number) => {
 	// pick the random odd one out and another for the common one from symbols, but they must be different
 	// the odd one out is the one that will be unique
 	const oddOneOut = SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)];
@@ -16,7 +17,7 @@ export const generateGrid = (size: number) => {
 	// the odd one out can only be placed once
 	const oddOneOutIndex = Math.floor(Math.random() * size * size);
 
-	console.log(`generate size: ${size}x${size}`);
+	// console.log(`generate size: ${size}x${size}`);
 
 	for (let i = 0; i < size; i++) {
 		grid.push([]);
@@ -29,7 +30,7 @@ export const generateGrid = (size: number) => {
 		}
 	}
 
-	console.log(`grid size: ${grid.length}x${grid[0].length}`);
+	// console.log(`grid size: ${grid.length}x${grid[0].length}`);
 
 	return grid;
 };
