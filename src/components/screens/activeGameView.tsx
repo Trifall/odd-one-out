@@ -56,7 +56,7 @@ const ActiveGameView = ({
 				<div className=' flex w-full flex-col items-center justify-center text-lg'>
 					<p>Current Max Time: {timeRemaining.toFixed(1)}</p>
 					<Button onClick={handleContinueClick} className='mt-4'>
-						Continue {score % 5 === 0 ? `(Grid Size +1)` : ''}
+						Continue {score % 5 === 0 && gridSize < 10 ? `(Grid Size +1)` : ''}
 					</Button>
 				</div>
 			)}
