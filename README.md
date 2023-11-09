@@ -38,6 +38,10 @@ yarn install
 yarn dev
 ```
 
+5. Compile build
+```
+yarn build
+```
 
 
 ## TODOS
